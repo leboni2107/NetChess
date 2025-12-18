@@ -2,29 +2,27 @@
 
 internal class Program
 {
-    private static Piece[] initializeBoard()
+    static Piece[] InitializeBoard()
     {
         Piece[] board = new Piece[32];
-        int i = 0;
         
         
         // Pawns
-        while (i < 8)
+
+        for (int i = 0; i < 8; i++)
         {
             board[i] = new Piece();
-            board[i].coordinates = (i, 1);
-            board[i].pieceColor = Piece.Color.White;
+            board[i].coordinates = (i, 0);
             board[i].pieceType = Piece.Type.Pawn;
-            i++;
+            board[i].pieceColor = Piece.Color.White;
         }
-
-        while (i < 16)
+        
+        for (int i = 0; i < 8; i++)
         {
             board[i] = new Piece();
             board[i].coordinates = (i, 6);
-            board[i].pieceColor = Piece.Color.Black;
             board[i].pieceType = Piece.Type.Pawn;
-            i++;
+            board[i].pieceColor = Piece.Color.Black;
         }
         
         
@@ -62,15 +60,14 @@ internal class Program
         board[21].pieceColor = Piece.Color.White;
         
         board[22] = new Piece();
-        board[22].coordinates = (7, 1);
+        board[22].coordinates = (1, 7);
         board[22].pieceType = Piece.Type.Knight;
         board[22].pieceColor = Piece.Color.Black;
         
         board[23] = new Piece();
-        board[23].coordinates = (7, 6);
+        board[23].coordinates = (7, 7);
         board[23].pieceType = Piece.Type.Knight;
         board[23].pieceColor = Piece.Color.Black;
-        
         
         // Bishops
         board[24] = new Piece();
@@ -120,12 +117,47 @@ internal class Program
         
         return board;
     }
+
+    static void DisplayBoard(Piece[] board)
+    {
+        Console.Clear();
+        for (int i = 0; i < board.Length; i++)
+        {
+            Console.SetCursorPosition(board[i].coordinates.Item1, board[i].coordinates.Item2);
+            string symbol = "";
+            switch (board[i].pieceType)
+            {
+                case Piece.Type.Pawn:
+                    symbol = "p";
+                    break;
+                case Piece.Type.Bishop:
+                    symbol = "b";
+                    break;
+                case Piece.Type.Knight:
+                    symbol = "n";
+                    break;
+                case Piece.Type.Rook:
+                    symbol = "r";
+                    break;
+                case Piece.Type.Queen:
+                    symbol = "q";
+                    break;
+                case Piece.Type.King:
+                    symbol = "k";
+                    break;
+            }
+
+            if (board[i].pieceColor == Piece.Color.White)
+            {
+                symbol.ToUpper();
+            }
+            Console.Write(symbol);
+        }
+    }
     static void Main(string[] args)
     {
-        Piece[] board = initializeBoard();
-
-        
-        
-        Console.WriteLine("done");
+        Piece[] board = InitializeBoard();
+        DisplayBoard(board);
+        Console.ReadKey();
     }
 }
