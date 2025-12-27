@@ -116,14 +116,15 @@ internal class Program
         
         return board;
     }
-
     static void DisplayBoard(Piece[] board)
     {
         Console.Clear();
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        
         for (int i = 0; i < board.Length; i++)
         {
             Console.BackgroundColor = ConsoleColor.Black; Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(board[i].coordinates.x, board[i].coordinates.y);
+            Console.SetCursorPosition(board[i].coordinates.x*2+2, board[i].coordinates.y+1);
             string symbol = "";
             switch (board[i].pieceType)
             {
@@ -154,8 +155,24 @@ internal class Program
             }
                 
             Console.Write(symbol);
-            Console.SetCursorPosition(10, 0);
         }
+        
+        Console.SetCursorPosition(0, 0);
+        Console.Write("┏━━━━━━━━━━━━━━━┓");
+
+        for (int i = 1; i <= 8; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write("┃");
+            
+            Console.SetCursorPosition(16, i);
+            Console.Write("┃");
+        }
+        
+        Console.SetCursorPosition(0, 9);
+        Console.WriteLine("┗━━━━━━━━━━━━━━━┛");
+        
+        Console.SetCursorPosition(18, 0);
     }
     static void Main(string[] args)
     {
