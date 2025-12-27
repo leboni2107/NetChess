@@ -183,23 +183,64 @@ internal class Program
         switch(piece.pieceType)
         {
             case Piece.Type.Pawn:
-                if ((piece.pieceColor == Piece.Color.White && deltas == (0, 1)) || (piece.pieceColor == Piece.Color.Black && deltas == (0, -1)))
+                if (piece.pieceColor == Piece.Color.White && deltas == (0, 1) || 
+                    piece.pieceColor == Piece.Color.Black && deltas == (0, -1))
                     return true;
                 break;
+            
             case Piece.Type.Bishop:
-                if (Math.Abs(deltas.x) == Math.Abs(deltas.y))
+                if (Math.Abs(deltas.x) == Math.Abs(deltas.y) && deltas.x != 0)
                     return true;
                 break;
+            
             case Piece.Type.Knight:
-                if (deltas.x <= 1 && deltas.y <= 1  || (Math.Abs(deltas.x) == 1 && Math.Abs(deltas.y) == 2))
+                if ((Math.Abs(deltas.x) == 2 && Math.Abs(deltas.y) == 1) || 
+                    (Math.Abs(deltas.x) == 1 && Math.Abs(deltas.y) == 2))
                     return true;
                 break;
+            
             case Piece.Type.Rook:
-                if ((deltas.x > 0 && deltas.y == 0) || (deltas.x == 0 && deltas.y > 0))
+                if ((deltas.x != 0 && deltas.y == 0) || (deltas.x == 0 && deltas.y != 0))
+                    return true;
+                break;
+            
+            case Piece.Type.Queen:
+                if ((deltas.x != 0 && deltas.y == 0) || (deltas.x == 0 && deltas.y != 0) ||
+                    (Math.Abs(deltas.x) == Math.Abs(deltas.y) && deltas.x != 0))
+                    return true;
+                break;
+            
+            case Piece.Type.King:
+                if (Math.Abs(deltas.x) <= 1 && Math.Abs(deltas.y) <= 1 && (deltas.x != 0 || deltas.y != 0))
                     return true;
                 break;
         }
+        return false;
+    }
 
+    static bool IsBlockedMove(Piece[] board, (int x, int y) sub1, (int x, int y) sub2, int i)
+    {
+        if (board[i].pieceType == Piece.Type.Knight)
+            return false;
+    
+        int dx = Math.Sign(sub2.x - sub1.x);
+        int dy = Math.Sign(sub2.y - sub1.y);
+    
+        int currentX = sub1.x + dx;
+        int currentY = sub1.y + dy;
+        
+        while (currentX != sub2.x || currentY != sub2.y)
+        {
+            for (int j = 0; j < board.Length; j++)
+            {
+                if (!board[j].eliminated && board[j].coordinates == (currentX, currentY))
+                    return true;
+            }
+        
+            currentX += dx;
+            currentY += dy;
+        }
+    
         return false;
     }
     
@@ -228,7 +269,7 @@ internal class Program
                 
                 for (int i = 0; i < board.Length; i++)
                 {
-                    if (board[i].coordinates == sub1 && IsLegalMove(board[i], (sub2.x-sub1.x, sub2.y-sub1.y)))
+                    if (board[i].coordinates == sub1 && IsLegalMove(board[i], (sub2.x-sub1.x, sub2.y-sub1.y)) && !IsBlockedMove(board, sub1, sub2, i))
                     {
                         if(turn % 2 == 0 && board[i].pieceColor == Piece.Color.White)
                             board[i].coordinates = sub2;
