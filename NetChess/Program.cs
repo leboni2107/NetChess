@@ -124,7 +124,7 @@ internal class Program
         for (int i = 0; i < board.Length; i++)
         {
             Console.BackgroundColor = ConsoleColor.Black; Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(board[i].coordinates.x*2+2, board[i].coordinates.y+1);
+            Console.SetCursorPosition(board[i].coordinates.x*3+4, board[i].coordinates.y+2);
             string symbol = "";
             switch (board[i].pieceType)
             {
@@ -157,22 +157,25 @@ internal class Program
             Console.Write(symbol);
         }
         
-        Console.SetCursorPosition(0, 0);
-        Console.Write("┏━━━━━━━━━━━━━━━┓");
+        Console.SetCursorPosition(2, 0);
+        Console.Write("  A  B  C  D  E  F  G  H");
+        
+        Console.SetCursorPosition(2, 1);
+        Console.Write("┏━━━━━━━━━━━━━━━━━━━━━━━━┓");
 
-        for (int i = 1; i <= 8; i++)
+        for (int i = 2; i <= 9; i++)
         {
             Console.SetCursorPosition(0, i);
-            Console.Write("┃");
+            Console.Write($"{i-1} ┃");
             
-            Console.SetCursorPosition(16, i);
+            Console.SetCursorPosition(27, i);
             Console.Write("┃");
         }
         
-        Console.SetCursorPosition(0, 9);
-        Console.WriteLine("┗━━━━━━━━━━━━━━━┛");
+        Console.SetCursorPosition(2, 10);
+        Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━┛");
         
-        Console.SetCursorPosition(18, 0);
+        Console.SetCursorPosition(30, 1);
     }
     static void Main(string[] args)
     {
@@ -187,16 +190,18 @@ internal class Program
 
             Console.Write("Notation: ");
             notation = Console.ReadLine();
-
-            sub1 = (int.Parse(notation.Substring(0, 1)), int.Parse(notation.Substring(1, 1)));
-            sub2 = (int.Parse(notation.Substring(3, 1)), int.Parse(notation.Substring(4, 1)));
-            
-            for (int i = 0; i < board.Length; i++)
+            if (notation.Length == 4)
             {
-                if (board[i].coordinates == sub1)
+                sub1 = (int.Parse(notation.Substring(0, 1))+1, int.Parse(notation.Substring(1, 1))+1);
+                sub2 = (int.Parse(notation.Substring(3, 1))+1, int.Parse(notation.Substring(4, 1))+1);
+                
+                for (int i = 0; i < board.Length; i++)
                 {
-                    board[i].coordinates = sub2;
-                    break;
+                    if (board[i].coordinates == sub1)
+                    {
+                        board[i].coordinates = sub2;
+                        break;
+                    }
                 }
             }
         }
