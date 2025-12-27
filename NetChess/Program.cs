@@ -174,35 +174,69 @@ internal class Program
         
         Console.SetCursorPosition(2, 10);
         Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━┛");
-        
-        Console.SetCursorPosition(30, 1);
     }
+
+    static bool IsLegalMove(Piece piece, (int x, int y) deltas)
+    {
+        switch(piece.pieceType)
+        {
+            case Piece.Type.Pawn:
+                if (deltas == (0, 1))
+                    return true;
+                break;
+            case Piece.Type.Bishop:
+                if (Math.Abs(deltas.x) == Math.Abs(deltas.y))
+                    return true;
+                break;
+            case Piece.Type.Knight:
+                if (deltas.x <= 1 && deltas.y <= 1)
+                    return true;
+                break;
+            case Piece.Type.Rook:
+                if ((deltas.x > 0 && deltas.y == 0) || (deltas.x == 0 && deltas.y > 0))
+                    return true;
+                break;
+        }
+
+        return false;
+    }
+    
     static void Main(string[] args)
     {
         bool end = false;
         string notation;
         (int x, int y) sub1, sub2;
         Piece[] board = InitializeBoard();
+        int turn = 0;
 
         while (!end)
         {
             DisplayBoard(board);
-
+            
+            Console.SetCursorPosition(30, 1);
+            Console.WriteLine($"Turn: {(turn % 2 == 0 ? "White" : "Black")}");
+            
+            Console.SetCursorPosition(30, 2);
             Console.Write("Notation: ");
             notation = Console.ReadLine();
-            if (notation.Length == 4)
+            if (notation.Length == 5)
             {
-                sub1 = (int.Parse(notation.Substring(0, 1))+1, int.Parse(notation.Substring(1, 1))+1);
-                sub2 = (int.Parse(notation.Substring(3, 1))+1, int.Parse(notation.Substring(4, 1))+1);
+                sub1 = (int.Parse(notation.Substring(0, 1))-1, int.Parse(notation.Substring(1, 1))-1);
+                sub2 = (int.Parse(notation.Substring(3, 1))-1, int.Parse(notation.Substring(4, 1))-1);
                 
                 for (int i = 0; i < board.Length; i++)
                 {
-                    if (board[i].coordinates == sub1)
+                    if (board[i].coordinates == sub1 && IsLegalMove(board[i], (sub1.x-sub2.x, sub1.y-sub2.y)))
                     {
-                        board[i].coordinates = sub2;
+                        if(turn % 2 == 0 && board[i].pieceColor == Piece.Color.White)
+                            board[i].coordinates = sub2;
+                        else if(turn % 2 != 0 && board[i].pieceColor == Piece.Color.Black)
+                            board[i].coordinates = sub2;
                         break;
                     }
                 }
+                
+                turn++;
             }
         }
         
