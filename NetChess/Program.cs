@@ -123,6 +123,9 @@ internal class Program
         
         for (int i = 0; i < board.Length; i++)
         {
+            if (board[i].eliminated)
+                continue;
+            
             Console.BackgroundColor = ConsoleColor.Black; Console.ForegroundColor = ConsoleColor.White;
             Console.SetCursorPosition(board[i].coordinates.x*3+4, board[i].coordinates.y+2);
             string symbol = "";
@@ -153,7 +156,7 @@ internal class Program
                 Console.BackgroundColor = ConsoleColor.White; 
                 Console.ForegroundColor = ConsoleColor.Black;
             }
-                
+            
             Console.Write(symbol);
         }
         
@@ -175,13 +178,12 @@ internal class Program
         Console.SetCursorPosition(2, 10);
         Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━┛");
     }
-
     static bool IsLegalMove(Piece piece, (int x, int y) deltas)
     {
         switch(piece.pieceType)
         {
             case Piece.Type.Pawn:
-                if (deltas == (0, 1))
+                if ((piece.pieceColor == Piece.Color.White && deltas == (0, 1)) || (piece.pieceColor == Piece.Color.Black && deltas == (0, -1)))
                     return true;
                 break;
             case Piece.Type.Bishop:
@@ -189,7 +191,7 @@ internal class Program
                     return true;
                 break;
             case Piece.Type.Knight:
-                if (deltas.x <= 1 && deltas.y <= 1)
+                if (deltas.x <= 1 && deltas.y <= 1  || (Math.Abs(deltas.x) == 1 && Math.Abs(deltas.y) == 2))
                     return true;
                 break;
             case Piece.Type.Rook:
@@ -226,17 +228,51 @@ internal class Program
                 
                 for (int i = 0; i < board.Length; i++)
                 {
-                    if (board[i].coordinates == sub1 && IsLegalMove(board[i], (sub1.x-sub2.x, sub1.y-sub2.y)))
+                    if (board[i].coordinates == sub1 && IsLegalMove(board[i], (sub2.x-sub1.x, sub2.y-sub1.y)))
                     {
                         if(turn % 2 == 0 && board[i].pieceColor == Piece.Color.White)
                             board[i].coordinates = sub2;
                         else if(turn % 2 != 0 && board[i].pieceColor == Piece.Color.Black)
                             board[i].coordinates = sub2;
+                        
+                        turn++;
                         break;
                     }
                 }
                 
-                turn++;
+            }
+
+            for (int i = 0; i < board.Length; i++)
+            {
+                for (int j = 0; j < board.Length; j++)
+                {
+                    if (j == i)
+                        continue;
+                    if (board[i].coordinates == board[j].coordinates)
+                    {
+                        if (turn % 2 == 0)
+                        {
+                            // Eliminate Black
+                            if (board[j].pieceColor == Piece.Color.Black)
+                                board[j].eliminated = true;
+                            else board[i].eliminated = true;
+                        }
+                        else
+                        {
+                            // Eliminate White
+                            if (board[j].pieceColor == Piece.Color.White)
+                                board[j].eliminated = true;
+                            else board[i].eliminated = true;
+                        }
+                    }
+                        
+                }
+            }
+
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (board[i].pieceType == Piece.Type.King && board[i].eliminated)
+                    end = true;
             }
         }
         

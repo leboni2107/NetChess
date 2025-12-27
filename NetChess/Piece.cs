@@ -8,4 +8,5 @@ public class Piece
     public Type pieceType;
     public enum Color { White, Black }
     public Color pieceColor;
+    public bool eliminated;
 }
